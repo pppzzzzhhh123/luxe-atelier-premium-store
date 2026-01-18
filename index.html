@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="description" content="LUÒJIAWANG璐珈女装 - 高端时尚女装品牌，专注于优质面料与精致设计，为追求品质生活的女性提供优雅时尚的穿搭选择。">
+    <meta name="keywords" content="女装,高端女装,时尚女装,LUOJIAWANG,璐珈女装,羊绒,真丝,品质女装">
+    <meta name="author" content="LUÒJIAWANG">
+    <meta name="theme-color" content="#1a1a1a">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://luxe-atelier.com/">
+    <meta property="og:title" content="LUÒJIAWANG璐珈女装 | 高端时尚女装品牌">
+    <meta property="og:description" content="专注于优质面料与精致设计，为追求品质生活的女性提供优雅时尚的穿搭选择。">
+    <meta property="og:image" content="https://luxe-atelier.com/og-image.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://luxe-atelier.com/">
+    <meta property="twitter:title" content="LUÒJIAWANG璐珈女装 | 高端时尚女装品牌">
+    <meta property="twitter:description" content="专注于优质面料与精致设计，为追求品质生活的女性提供优雅时尚的穿搭选择。">
+    <meta property="twitter:image" content="https://luxe-atelier.com/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    
+    <title>LUÒJIAWANG璐珈女装 | Luxe Atelier Premium Store</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&family=Noto+Serif+SC:wght@300;400;700&family=Noto+Sans+SC:wght@100;300;400;500;700&family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1a1a1a",
+                        "primary-light": "#2d2d2d",
+                        "accent": "#C5A059",
+                        "accent-light": "#D4B87D",
+                        "brand-dark": "#111111",
+                        "brand-gold": "#C5A059",
+                        "background-light": "#f6f7f8",
+                    },
+                    fontFamily: {
+                        "sans": ["Manrope", "Noto Sans SC", "sans-serif"],
+                        "serif": ["Noto Serif SC", "serif"],
+                        "display": ["Bodoni Moda", "serif"]
+                    },
+                    animation: {
+                        'fade-in': 'fade-in 0.3s ease-out',
+                        'slide-up': 'slide-up 0.3s ease-out',
+                        'scale-in': 'scale-in 0.2s ease-out',
+                    },
+                    keyframes: {
+                        'fade-in': {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        'slide-up': {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        'scale-in': {
+                            '0%': { transform: 'scale(0.95)', opacity: '0' },
+                            '100%': { transform: 'scale(1)', opacity: '1' },
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body { -webkit-tap-highlight-color: transparent; }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body class="bg-[#fbfbfb] text-[#1a1a1a]">
+    <div id="root"></div>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

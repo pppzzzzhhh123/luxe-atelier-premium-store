@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LUXE API 测试工具 - 数据持久化验证</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 30px;
+    }
+    
+    .header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    
+    .header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .card h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #1a1a1a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+    }
+    
+    .status.success { background: #10b981; }
+    .status.error { background: #ef4444; }
+    .status.pending { background: #f59e0b; }
+    
+    .input-group {
+      margin-bottom: 12px;
+    }
+    
+    .input-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+    
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    
+    .result {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    
+    .result.success {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #10b981;
+    }
+    
+    .result.error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #ef4444;
+    }
+    
+    .token-display {
+      background: #f3f4f6;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: 'Courier New', monospace;
+      word-break: break-all;
+      margin-bottom: 16px;
+    }
+    
+    .checklist {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+    
+    .checklist h2 {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: #1a1a1a;
+    }
+    
+    .checklist-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: #f9fafb;
+    }
+    
+    .checklist-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    .checklist-item label {
+      flex: 1;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🔧 LUXE API 测试工具</h1>
+      <p>数据持久化功能验证 | 后端: https://luxe-pi-kohl.vercel.app</p>
+    </div>
+
+    <div class="grid">
+      <!-- 1. 用户登录 -->
+      <div class="card">
+        <h2><span class="status" id="status-login"></span> 1. 用户登录</h2>
+        <div class="input-group">
+          <label>手机号</label>
+          <input type="text" id="login-phone" value="13800138000" placeholder="输入手机号">
+        </div>
+        <div class="input-group">
+          <label>密码</label>
+          <input type="password" id="login-password" value="123456" placeholder="输入密码">
+        </div>
+        <button class="btn btn-primary" onclick="testLogin()">登录</button>
+        <div id="result-login"></div>
+      </div>
+
+      <!-- 2. 获取用户信息 -->
+      <div class="card">
+        <h2><span class="status" id="status-profile"></span> 2. 获取用户信息</h2>
+        <div class="token-display" id="token-display">请先登录</div>
+        <button class="btn btn-primary" onclick="testGetProfile()" disabled id="btn-profile">获取用户信息</button>
+        <div id="result-profile"></div>
+      </div>
+
+      <!-- 3. 更新用户信息 -->
+      <div class="card">
+        <h2><span class="status" id="status-update"></span> 3. 更新用户信息</h2>
+        <div class="input-group">
+          <label>昵称</label>
+          <input type="text" id="update-nickname" placeholder="输入新昵称">
+        </div>
+        <div class="input-group">
+          <label>性别</label>
+          <select id="update-gender">
+            <option value="">不修改</option>
+            <option value="男">男</option>
+            <option value="女">女</option>
+            <option value="保密">保密</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" onclick="testUpdateProfile()" disabled id="btn-update">更新信息</button>
+        <div id="result-update"></div>
+      </div>
+
+      <!-- 4. 获取地址列表 -->
+      <div class="card">
+        <h2><span class="status" id="status-addresses"></span> 4. 获取地址列表</h2>
+        <button class="btn btn-primary" onclick="testGetAddresses()" disabled id="btn-addresses">获取地址列表</button>
+        <div id="result-addresses"></div>
+      </div>
+
+      <!-- 5. 创建地址 -->
+      <div class="card">
+        <h2><span class="status" id="status-create-address"></span> 5. 创建地址</h2>
+        <div class="input-group">
+          <label>收货人</label>
+          <input type="text" id="address-name" value="张三" placeholder="收货人姓名">
+        </div>
+        <div class="input-group">
+          <label>手机号</label>
+          <input type="text" id="address-phone" value="13900139000" placeholder="手机号">
+        </div>
+        <div class="input-group">
+          <label>详细地址</label>
+          <input type="text" id="address-detail" value="北京市朝阳区某某街道123号" placeholder="详细地址">
+        </div>
+        <button class="btn btn-primary" onclick="testCreateAddress()" disabled id="btn-create-address">创建地址</button>
+        <div id="result-create-address"></div>
+      </div>
+
+      <!-- 6. 测试订单创建 -->
+      <div class="card">
+        <h2><span class="status" id="status-order"></span> 6. 测试订单创建</h2>
+        <div class="input-group">
+          <label>地址 ID</label>
+          <input type="number" id="order-address-id" placeholder="从地址列表获取">
+        </div>
+        <div class="input-group">
+          <label>购物车商品 ID</label>
+          <input type="text" id="order-cart-ids" placeholder="例如: 1,2,3">
+        </div>
+        <button class="btn btn-primary" onclick="testCreateOrder()" disabled id="btn-order">创建订单</button>
+        <div id="result-order"></div>
+      </div>
+    </div>
+
+    <!-- 测试检查清单 -->
+    <div class="checklist">
+      <h2>✅ 测试检查清单</h2>
+      <div class="checklist-item">
+        <input type="checkbox" id="check-1">
+        <label for="check-1">1. 用户登录成功，获得 token</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="check-2">
+        <label for="check-2">2. 获取用户信息成功，显示昵称等数据</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="check-3">
+        <label for="check-3">3. 更新用户信息成功，刷新页面后数据保持</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="check-4">
+        <label for="check-4">4. 获取地址列表成功</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="check-5">
+        <label for="check-5">5. 创建地址成功，刷新页面后地址存在</label>
+      </div>
+      <div class="checklist-item">
+        <input type="checkbox" id="check-6">
+        <label for="check-6">6. 创建订单成功（不是 404）</label>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://luxe-pi-kohl.vercel.app/api';
+    let token = '';
+
+    // 显示结果
+    function showResult(elementId, data, isError = false) {
+      const element = document.getElementById(elementId);
+      element.className = `result ${isError ? 'error' : 'success'}`;
+      element.textContent = JSON.stringify(data, null, 2);
+    }
+
+    // 更新状态
+    function updateStatus(statusId, status) {
+      const element = document.getElementById(statusId);
+      element.className = `status ${status}`;
+    }
+
+    // 1. 登录
+    async function testLogin() {
+      const phone = document.getElementById('login-phone').value;
+      const password = document.getElementById('login-password').value;
+
+      try {
+        updateStatus('status-login', 'pending');
+        const response = await fetch(`${API_BASE}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.token) {
+          token = data.token;
+          document.getElementById('token-display').textContent = `Token: ${token.substring(0, 50)}...`;
+          
+          // 启用其他按钮
+          ['btn-profile', 'btn-update', 'btn-addresses', 'btn-create-address', 'btn-order'].forEach(id => {
+            document.getElementById(id).disabled = false;
+          });
+
+          updateStatus('status-login', 'success');
+          showResult('result-login', data);
+        } else {
+          throw new Error(data.message || '登录失败');
+        }
+      } catch (error) {
+        updateStatus('status-login', 'error');
+        showResult('result-login', { error: error.message }, true);
+      }
+    }
+
+    // 2. 获取用户信息
+    async function testGetProfile() {
+      try {
+        updateStatus('status-profile', 'pending');
+        const response = await fetch(`${API_BASE}/users/me`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updateStatus('status-profile', 'success');
+          showResult('result-profile', data);
+          
+          // 自动填充昵称
+          if (data.data && data.data.nickname) {
+            document.getElementById('update-nickname').value = data.data.nickname;
+          }
+        } else {
+          throw new Error(data.message || '获取失败');
+        }
+      } catch (error) {
+        updateStatus('status-profile', 'error');
+        showResult('result-profile', { error: error.message }, true);
+      }
+    }
+
+    // 3. 更新用户信息
+    async function testUpdateProfile() {
+      const nickname = document.getElementById('update-nickname').value;
+      const gender = document.getElementById('update-gender').value;
+
+      const updateData = {};
+      if (nickname) updateData.nickname = nickname;
+      if (gender) updateData.gender = gender;
+
+      if (Object.keys(updateData).length === 0) {
+        alert('请至少填写一个要更新的字段');
+        return;
+      }
+
+      try {
+        updateStatus('status-update', 'pending');
+        const response = await fetch(`${API_BASE}/users/me`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(updateData)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updateStatus('status-update', 'success');
+          showResult('result-update', data);
+          alert('✅ 更新成功！请刷新页面验证数据是否保持');
+        } else {
+          throw new Error(data.message || '更新失败');
+        }
+      } catch (error) {
+        updateStatus('status-update', 'error');
+        showResult('result-update', { error: error.message }, true);
+      }
+    }
+
+    // 4. 获取地址列表
+    async function testGetAddresses() {
+      try {
+        updateStatus('status-addresses', 'pending');
+        const response = await fetch(`${API_BASE}/addresses`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updateStatus('status-addresses', 'success');
+          showResult('result-addresses', data);
+          
+          // 自动填充第一个地址 ID
+          if (data.data && data.data.length > 0) {
+            document.getElementById('order-address-id').value = data.data[0].id;
+          }
+        } else {
+          throw new Error(data.message || '获取失败');
+        }
+      } catch (error) {
+        updateStatus('status-addresses', 'error');
+        showResult('result-addresses', { error: error.message }, true);
+      }
+    }
+
+    // 5. 创建地址
+    async function testCreateAddress() {
+      const name = document.getElementById('address-name').value;
+      const phone = document.getElementById('address-phone').value;
+      const detail = document.getElementById('address-detail').value;
+
+      if (!name || !phone || !detail) {
+        alert('请填写完整的地址信息');
+        return;
+      }
+
+      try {
+        updateStatus('status-create-address', 'pending');
+        const response = await fetch(`${API_BASE}/addresses`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name,
+            phone,
+            province: '北京市',
+            city: '朝阳区',
+            detail,
+            tag: '家',
+            isDefault: false
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updateStatus('status-create-address', 'success');
+          showResult('result-create-address', data);
+          alert('✅ 地址创建成功！请刷新页面验证地址是否存在');
+          
+          // 自动填充地址 ID
+          if (data.data && data.data.id) {
+            document.getElementById('order-address-id').value = data.data.id;
+          }
+        } else {
+          throw new Error(data.message || '创建失败');
+        }
+      } catch (error) {
+        updateStatus('status-create-address', 'error');
+        showResult('result-create-address', { error: error.message }, true);
+      }
+    }
+
+    // 6. 创建订单
+    async function testCreateOrder() {
+      const addressId = document.getElementById('order-address-id').value;
+      const cartIds = document.getElementById('order-cart-ids').value;
+
+      if (!addressId) {
+        alert('请先创建地址或从地址列表获取地址 ID');
+        return;
+      }
+
+      if (!cartIds) {
+        alert('请输入购物车商品 ID（用逗号分隔）');
+        return;
+      }
+
+      const cartItemIds = cartIds.split(',').map(id => parseInt(id.trim()));
+
+      try {
+        updateStatus('status-order', 'pending');
+        const response = await fetch(`${API_BASE}/orders`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            addressId: parseInt(addressId),
+            cartItemIds,
+            paymentMethod: 'alipay',
+            remark: '测试订单'
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          updateStatus('status-order', 'success');
+          showResult('result-order', data);
+          alert('✅ 订单创建成功！');
+        } else {
+          // 即使失败，只要不是 404 就算部分成功
+          if (response.status === 404) {
+            updateStatus('status-order', 'error');
+            showResult('result-order', { error: '404 - 接口不存在，后端未部署！' }, true);
+          } else {
+            updateStatus('status-order', 'pending');
+            showResult('result-order', { 
+              status: response.status,
+              message: data.message || '请求已发送，但业务逻辑失败',
+              note: '如果不是 404，说明接口存在，只是业务逻辑问题'
+            });
+          }
+        }
+      } catch (error) {
+        updateStatus('status-order', 'error');
+        showResult('result-order', { error: error.message }, true);
+      }
+    }
+  </script>
+</body>
+</html>

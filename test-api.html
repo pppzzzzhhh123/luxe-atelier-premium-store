@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LUXE API 测试工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .section h2 {
+            color: #667eea;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .result.info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 LUXE API 测试工具</h1>
+        <p class="subtitle">测试前后端连接和注册功能</p>
+        
+        <!-- API 配置 -->
+        <div class="section">
+            <h2>📡 API 配置</h2>
+            <div class="form-group">
+                <label>API 基础 URL</label>
+                <input type="text" id="apiUrl" value="https://luxe-pi-kohl.vercel.app/api">
+            </div>
+            <button onclick="testHealth()">测试连接</button>
+            <div id="healthResult"></div>
+        </div>
+        
+        <!-- 发送验证码 -->
+        <div class="section">
+            <h2>📱 发送验证码</h2>
+            <div class="form-group">
+                <label>手机号</label>
+                <input type="tel" id="phoneForCode" value="13900139001" maxlength="11">
+            </div>
+            <button onclick="sendCode()">发送验证码</button>
+            <div id="codeResult"></div>
+        </div>
+        
+        <!-- 注册测试 -->
+        <div class="section">
+            <h2>✨ 注册测试</h2>
+            <div class="form-group">
+                <label>手机号</label>
+                <input type="tel" id="phone" value="13900139001" maxlength="11">
+            </div>
+            <div class="form-group">
+                <label>验证码</label>
+                <input type="text" id="code" value="123456" maxlength="6">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="password" value="Test123456">
+            </div>
+            <div class="form-group">
+                <label>邀请码（可选）</label>
+                <input type="text" id="inviteCode">
+            </div>
+            <button onclick="testRegister()">测试注册</button>
+            <button onclick="clearResults()">清除结果</button>
+            <div id="registerResult"></div>
+        </div>
+        
+        <!-- 登录测试 -->
+        <div class="section">
+            <h2>🔐 登录测试</h2>
+            <div class="form-group">
+                <label>手机号</label>
+                <input type="tel" id="loginPhone" value="13900139001" maxlength="11">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPassword" value="Test123456">
+            </div>
+            <button onclick="testLogin()">测试登录</button>
+            <div id="loginResult"></div>
+        </div>
+    </div>
+
+    <script>
+        function getApiUrl() {
+            return document.getElementById('apiUrl').value.trim();
+        }
+
+        function showResult(elementId, message, type) {
+            const element = document.getElementById(elementId);
+            element.className = 'result ' + type;
+            element.textContent = message;
+        }
+
+        async function testHealth() {
+            const apiUrl = getApiUrl();
+            showResult('healthResult', '正在测试连接...', 'info');
+            
+            try {
+                const response = await fetch(apiUrl.replace('/api', '') + '/health');
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('healthResult', 
+                        '✅ 连接成功！\n\n' +
+                        '状态: ' + data.status + '\n' +
+                        '时间: ' + data.timestamp + '\n' +
+                        '环境: ' + data.environment + '\n\n' +
+                        '完整响应:\n' + JSON.stringify(data, null, 2),
+                        'success'
+                    );
+                } else {
+                    showResult('healthResult', 
+                        '❌ 连接失败\n\n状态码: ' + response.status,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('healthResult', 
+                    '❌ 连接失败\n\n错误: ' + error.message,
+                    'error'
+                );
+            }
+        }
+
+        async function sendCode() {
+            const apiUrl = getApiUrl();
+            const phone = document.getElementById('phoneForCode').value.trim();
+            
+            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                showResult('codeResult', '❌ 请输入正确的手机号', 'error');
+                return;
+            }
+            
+            showResult('codeResult', '正在发送验证码...', 'info');
+            
+            try {
+                const response = await fetch(apiUrl + '/auth/send-code', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('codeResult', 
+                        '✅ 验证码发送成功！\n\n' +
+                        '手机号: ' + phone + '\n' +
+                        '验证码: ' + (data.code || '123456') + '\n' +
+                        '消息: ' + data.message,
+                        'success'
+                    );
+                } else {
+                    showResult('codeResult', 
+                        '❌ 发送失败\n\n状态码: ' + response.status + '\n错误: ' + data.message,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('codeResult', '❌ 发送失败\n\n错误: ' + error.message, 'error');
+            }
+        }
+
+        async function testRegister() {
+            const apiUrl = getApiUrl();
+            const phone = document.getElementById('phone').value.trim();
+            const code = document.getElementById('code').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const inviteCode = document.getElementById('inviteCode').value.trim();
+            
+            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                showResult('registerResult', '❌ 请输入正确的手机号', 'error');
+                return;
+            }
+            
+            if (!code) {
+                showResult('registerResult', '❌ 请输入验证码', 'error');
+                return;
+            }
+            
+            if (!password || password.length < 6) {
+                showResult('registerResult', '❌ 密码至少6位', 'error');
+                return;
+            }
+            
+            showResult('registerResult', '正在注册...', 'info');
+            
+            try {
+                const requestBody = { phone: phone, code: code, password: password };
+                if (inviteCode) {
+                    requestBody.inviteCode = inviteCode;
+                }
+                
+                console.log('📤 注册请求:', requestBody);
+                
+                const response = await fetch(apiUrl + '/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                
+                const data = await response.json();
+                console.log('📥 注册响应:', data);
+                
+                if (response.ok) {
+                    showResult('registerResult', 
+                        '✅ 注册成功！\n\n' +
+                        '用户 ID: ' + data.user.id + '\n' +
+                        '手机号: ' + data.user.phone + '\n' +
+                        '姓名: ' + data.user.name + '\n' +
+                        '邀请码: ' + data.user.inviteCode + '\n' +
+                        '积分: ' + data.user.points + '\n' +
+                        '余额: ' + data.user.balance + '\n' +
+                        'Token: ' + data.token.substring(0, 50) + '...\n\n' +
+                        '完整响应:\n' + JSON.stringify(data, null, 2),
+                        'success'
+                    );
+                } else {
+                    showResult('registerResult', 
+                        '❌ 注册失败\n\n' +
+                        '状态码: ' + response.status + '\n' +
+                        '错误: ' + data.message,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('registerResult', '❌ 注册失败\n\n错误: ' + error.message, 'error');
+            }
+        }
+
+        async function testLogin() {
+            const apiUrl = getApiUrl();
+            const phone = document.getElementById('loginPhone').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            
+            if (!phone || !/^1[3-9]\d{9}$/.test(phone)) {
+                showResult('loginResult', '❌ 请输入正确的手机号', 'error');
+                return;
+            }
+            
+            if (!password) {
+                showResult('loginResult', '❌ 请输入密码', 'error');
+                return;
+            }
+            
+            showResult('loginResult', '正在登录...', 'info');
+            
+            try {
+                const response = await fetch(apiUrl + '/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phone, password: password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showResult('loginResult', 
+                        '✅ 登录成功！\n\n' +
+                        '用户 ID: ' + data.user.id + '\n' +
+                        '手机号: ' + data.user.phone + '\n' +
+                        '姓名: ' + data.user.name + '\n' +
+                        'Token: ' + data.token.substring(0, 50) + '...\n\n' +
+                        '完整响应:\n' + JSON.stringify(data, null, 2),
+                        'success'
+                    );
+                } else {
+                    showResult('loginResult', 
+                        '❌ 登录失败\n\n状态码: ' + response.status + '\n错误: ' + data.message,
+                        'error'
+                    );
+                }
+            } catch (error) {
+                showResult('loginResult', '❌ 登录失败\n\n错误: ' + error.message, 'error');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('healthResult').textContent = '';
+            document.getElementById('codeResult').textContent = '';
+            document.getElementById('registerResult').textContent = '';
+            document.getElementById('loginResult').textContent = '';
+        }
+
+        console.log('🚀 API 测试工具已加载');
+    </script>
+</body>
+</html>

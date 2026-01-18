@@ -1,0 +1,35 @@
+{
+  "name": "luxe-atelier-premium-store",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "LUÒJIAWANG璐珈女装 - 高端时尚女装品牌电商前端",
+  "author": "LUÒJIAWANG Team",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "type-check": "tsc --noEmit",
+    "lint": "echo 'Linting...'",
+    "format": "echo 'Formatting...'"
+  },
+  "dependencies": {
+    "axios": "^1.13.2",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
+  },
+  "keywords": [
+    "react",
+    "typescript",
+    "vite",
+    "ecommerce",
+    "fashion",
+    "luxury"
+  ]
+}
